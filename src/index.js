@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 class ProductRow extends React.Component {
     render() {
@@ -131,7 +132,6 @@ class UserList extends React.Component {
         }).then(res => {
             res.json().then(userList => {
                 this.setState({users: userList});
-                console.log(this.state.users[0].username);
             })
         }).catch(err => console.log(err));
     }
@@ -139,13 +139,36 @@ class UserList extends React.Component {
     render() {
         if(this.state.users){
             return (
-                <span>{this.state.users[0].username}</span>
+                <div>
+                    {this.state.users.map(function(user) {
+                        return <User key={user._id} username={user.username} status={user.status} />
+                    })}
+                </div>
             );
         }
         return (
             <div>Loading...</div>
         );
     }
+}
+
+class User extends React.Component {
+    /*constructor(props) {
+        super(props);
+    }*/
+    render() {
+        return (
+            <div>
+                <span>{this.props.username}</span><br/>
+                <span>{this.props.status}</span><br/>
+            </div>
+        );
+    }
+}
+
+User.propTypes = {
+    username: PropTypes.string.isRequired,
+    status: PropTypes.number.isRequired
 }
 
 var PRODUCTS = [
