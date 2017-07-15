@@ -107,7 +107,43 @@ class FilterableProductTable extends React.Component {
             <div>
                 <SearchBar filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} onFilterTextInput={this.handleFilterTextInput} onInStockInput={this.handleInStockInput} />
                 <ProductTable products={this.props.products} filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} />
+                <UserList />
             </div>
+        );
+    }
+}
+
+class UserList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            users: undefined
+        };
+    }
+
+    componentDidMount() {
+        this.getUserList();
+    }
+
+    getUserList() {
+        fetch('http://127.0.0.1:3001/api/users/',{
+            method: 'GET'
+        }).then(res => {
+            res.json().then(userList => {
+                this.setState({users: userList});
+                console.log(this.state.users[0].username);
+            })
+        }).catch(err => console.log(err));
+    }
+
+    render() {
+        if(this.state.users){
+            return (
+                <span>{this.state.users[0].username}</span>
+            );
+        }
+        return (
+            <div>Loading...</div>
         );
     }
 }
