@@ -109,6 +109,7 @@ class FilterableProductTable extends React.Component {
                 <SearchBar filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} onFilterTextInput={this.handleFilterTextInput} onInStockInput={this.handleInStockInput} />
                 <ProductTable products={this.props.products} filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} />
                 <UserList />
+                <Button />
             </div>
         );
     }
@@ -171,6 +172,42 @@ User.propTypes = {
     first_name: PropTypes.string.isRequired,
     last_name: PropTypes.string.isRequired,
     date_joined: PropTypes.instanceOf(Date)
+}
+
+class Button extends React.Component {
+
+    handleClick() {
+        var payload = {
+            "fb_id": "7234343477543",
+	        "first_name": "Lol",
+	        "last_name": "Rofl",
+	        "email": "lol@gmail.com"
+        };
+        var data = new FormData();
+        data.append('json',JSON.stringify(payload));
+        fetch('http://127.0.0.1:3003/api/users/',{
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            res.json().then(user => {
+                console.log(user);
+            });
+        })
+        .catch(err => {
+            console.log(err.json());
+        });
+    }
+
+    render() {
+        return (
+            <button onClick={this.handleClick}>Add user</button>
+        )
+    }
 }
 
 var PRODUCTS = [
