@@ -164,6 +164,11 @@ class UserList extends React.Component {
     }
 }
 
+UserList.propTypes = {
+    users: PropTypes.arrayOf(Object),
+    onInitialGetUsers: PropTypes.func
+}
+
 class User extends React.Component {
     /*constructor(props) {
         super(props);
@@ -224,6 +229,10 @@ class Button extends React.Component {
             <button onClick={this.handleClick}>Add user</button>
         )
     }
+}
+
+Button.propTypes = {
+    onUserAdded: PropTypes.func
 }
 
 var PRODUCTS = [
