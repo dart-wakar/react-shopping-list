@@ -127,7 +127,7 @@ class UserList extends React.Component {
     }
 
     getUserList() {
-        fetch('http://127.0.0.1:3001/api/users/',{
+        fetch('http://127.0.0.1:3003/api/users/',{
             method: 'GET'
         }).then(res => {
             res.json().then(userList => {
@@ -141,7 +141,7 @@ class UserList extends React.Component {
             return (
                 <div>
                     {this.state.users.map(function(user) {
-                        return <User key={user._id} username={user.username} status={user.status} />
+                        return <User key={user._id} first_name={user.first_name} last_name={user.last_name} date_joined={new Date(user.date_joined)}/>
                     })}
                 </div>
             );
@@ -159,16 +159,18 @@ class User extends React.Component {
     render() {
         return (
             <div>
-                <span>{this.props.username}</span><br/>
-                <span>{this.props.status}</span><br/>
+                <span>{this.props.first_name}</span> &nbsp;
+                <span>{this.props.last_name}</span><br/>
+                <span><b>Date joined: </b>{this.props.date_joined.toString()}</span>
             </div>
         );
     }
 }
 
 User.propTypes = {
-    username: PropTypes.string.isRequired,
-    status: PropTypes.number.isRequired
+    first_name: PropTypes.string.isRequired,
+    last_name: PropTypes.string.isRequired,
+    date_joined: PropTypes.instanceOf(Date)
 }
 
 var PRODUCTS = [
