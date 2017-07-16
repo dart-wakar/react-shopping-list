@@ -87,10 +87,13 @@ class FilterableProductTable extends React.Component {
         super(props);
         this.state = {
             filterText: '',
-            inStockOnly: false
+            inStockOnly: false,
+            users: []
         };
         this.handleFilterTextInput = this.handleFilterTextInput.bind(this);
         this.handleInStockInput = this.handleInStockInput.bind(this);
+        this.handleNewUserAdded = this.handleNewUserAdded.bind(this);
+        this.handleInitialUsers = this.handleInitialUsers.bind(this);
     }
 
     handleFilterTextInput(filterText) {
@@ -105,26 +108,33 @@ class FilterableProductTable extends React.Component {
         });
     }
 
+    handleNewUserAdded(user) {
+        this.setState(function(prevState,props) {
+            prevState.users.push(user);
+            return {
+                users: prevState.users
+            }
+        });
+    }
+
+    handleInitialUsers(users) {
+        this.setState({users: users});
+    }
+
     render() {
         return (
             <div>
                 <SearchBar filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} onFilterTextInput={this.handleFilterTextInput} onInStockInput={this.handleInStockInput} />
                 <ProductTable products={this.props.products} filterText={this.state.filterText} inStockOnly={this.state.inStockOnly} />
-                <UserList />
-                <Button />
+                <UserList onInitialGetUsers={this.handleInitialUsers} users={this.state.users}/>
+                <Button onUserAdded={this.handleNewUserAdded}/>
             </div>
         );
     }
 }
 
 class UserList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            users: undefined
-        };
-    }
-
+    
     componentDidMount() {
         this.getUserList();
     }
@@ -132,16 +142,17 @@ class UserList extends React.Component {
     getUserList() {
         Observable.fromPromise(fetch('http://127.0.0.1:3003/api/users/',{
             method: 'GET'
-        }).then(res => res.json(),err => err.json())).subscribe(users => this.setState({users: users}),
-        err => console.log(err));
-        
+        }).then(res => res.json(),err => err.json())).subscribe(users => {
+            this.props.onInitialGetUsers(users);
+        },
+        err => console.log(err));    
     }
 
     render() {
-        if(this.state.users){
+        if(this.props.users){
             return (
                 <div>
-                    {this.state.users.map(function(user) {
+                    {this.props.users.map(function(user) {
                         return <User key={user._id} first_name={user.first_name} last_name={user.last_name} date_joined={new Date(user.date_joined)}/>
                     })}
                 </div>
@@ -176,12 +187,17 @@ User.propTypes = {
 
 class Button extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
     handleClick() {
         var payload = {
-            "fb_id": "7234343477543",
-	        "first_name": "Lol",
-	        "last_name": "Rofl",
-	        "email": "lol@gmail.com"
+            "fb_id": "48626151887951",
+	        "first_name": "Holy",
+	        "last_name": "Nigga",
+	        "email": "holynigga@gmail.com"
         };
         var data = new FormData();
         data.append('json',JSON.stringify(payload));
@@ -195,7 +211,7 @@ class Button extends React.Component {
         })
         .then(res => {
             res.json().then(user => {
-                console.log(user);
+                this.props.onUserAdded(user);
             });
         })
         .catch(err => {
