@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx';
 
 class ProductRow extends React.Component {
     render() {
@@ -128,13 +130,11 @@ class UserList extends React.Component {
     }
 
     getUserList() {
-        fetch('http://127.0.0.1:3003/api/users/',{
+        Observable.fromPromise(fetch('http://127.0.0.1:3003/api/users/',{
             method: 'GET'
-        }).then(res => {
-            res.json().then(userList => {
-                this.setState({users: userList});
-            })
-        }).catch(err => console.log(err));
+        }).then(res => res.json(),err => err.json())).subscribe(users => this.setState({users: users}),
+        err => console.log(err));
+        
     }
 
     render() {
